@@ -2,10 +2,13 @@
 name = "valid8"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/JacoMalan1/valid8"
+license = "Apache-2.0"
+description = "A simple, no-nonsense validation library."
 
 [dependencies]
 regex = { version = "1.11.1" }
-valid8_derive = { path = "../valid8_derive/", optional = true }
+valid8_derive = { version = "0", path = "../valid8_derive/", optional = true }
 
 [features]
 derive = ["valid8_derive"]

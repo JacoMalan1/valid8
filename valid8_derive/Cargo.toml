@@ -2,6 +2,9 @@
 name = "valid8_derive"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/JacoMalan1/valid8"
+license = "Apache-2.0"
+description = "Derive macros for valid8"
 
 [lib]
 proc-macro = true
