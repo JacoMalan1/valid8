@@ -1,0 +1,11 @@
+[package]
+name = "valid8"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+regex = { version = "1.11.1" }
+valid8_derive = { path = "../valid8_derive/", optional = true }
+
+[features]
+derive = ["valid8_derive"]

@@ -1,0 +1,2 @@
+[workspace]
+members = ["valid8", "valid8_derive", "test_suite"]

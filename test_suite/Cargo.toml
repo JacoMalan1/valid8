@@ -1,0 +1,8 @@
+[package]
+publish = false
+name = "valid8_test_suite"
+version = "0.0.0"
+edition = "2018"
+
+[dependencies]
+valid8 = { path = "../valid8", features = ["derive"] }
