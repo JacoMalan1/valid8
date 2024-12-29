@@ -15,8 +15,6 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
         panic!("Can only derive Validate on structs.")
     };
 
-    let validation_error_struct_ident = quote::format_ident!("{}ValidationError", &ident);
-
     let field_validator_results = fields
         .into_iter()
         .enumerate()
@@ -56,11 +54,19 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
                     match &arg {
                         syn::Meta::Path(p) => {
                             if p.is_ident("required") {
-                                Ok(validate::generate_required_for(validator_base_ident, &field, &validation_error_struct_ident))
+                                Ok(validate::generate_required_for(validator_base_ident, &field))
                             } else if p.is_ident("email") {
-                                Ok(validate::generate_email_for(validator_base_ident, &field, &validation_error_struct_ident))
+                                Ok(validate::generate_email_for(validator_base_ident, &field))
                             } else {
-                                Err(quote::quote_spanned! { arg.span() => compile_error!("Unknown validator")}.into())
+                                Err(quote::quote_spanned! { arg.span() => compile_error!("Unknown validator"); }.into())
+                            }
+                        },
+                        syn::Meta::List(syn::MetaList { path, tokens, .. }) => {
+                            if path.is_ident("min") {
+                                let lit = syn::parse::<syn::LitInt>(tokens.clone().into()).expect("Invalid expression.");
+                                Ok(validate::generate_min_for(lit, validator_base_ident, &field))
+                            } else {
+                                Err(quote::quote_spanned! { arg.span() => compile_error!("Unknown validator"); }.into())
                             }
                         }
                         _ => Err(quote::quote_spanned! { arg.span() =>
@@ -100,17 +106,10 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
     });
 
     quote::quote! {
-        #[allow(dead_code)]
         #[automatically_derived]
-        #[derive(Debug)]
-        pub enum #validation_error_struct_ident {
-            Missing(String),
-            Email
-        }
-
-        #[automatically_derived]
+        #[allow(dead_code, unused_variables)]
         impl #ident {
-            pub fn validate(&self) -> Result<(), #validation_error_struct_ident> {
+            pub fn validate(&self) -> Result<(), ::valid8::ValidationError> {
                 use ::valid8::Validator;
                 #(
                     #[allow(non_snake_case, clippy::ptr_arg)]
