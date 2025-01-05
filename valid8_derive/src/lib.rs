@@ -112,7 +112,14 @@ pub fn derive_validate(input: TokenStream) -> TokenStream {
             pub fn validate(&self) -> Result<(), ::valid8::ValidationError> {
                 use ::valid8::Validator;
                 #(
-                    #[allow(non_snake_case, clippy::ptr_arg)]
+                    #[allow(
+                        non_snake_case,
+                        clippy::ptr_arg,
+                        clippy::unwrap_used,
+                        clippy::ignored_unit_patterns,
+                        clippy::needless_lifetimes,
+                        clippy::needless_borrow,
+                    )]
                     #field_validators_code
                 )*
                 #(#validation_code)*
